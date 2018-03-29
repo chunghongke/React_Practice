@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 
 class Content extends Component {
     render(){
-        console.log(this.props);
+        // console.log(this.props);
         // const data = this.props.data || []
       return (
-        <div>
+        <div id={this.props.data.name}>
             <h3>
                 <input type="radio" checked={this.props.check} onChange={()=>this.props.onMenuClick(this.props.No)}                
                 /> 
