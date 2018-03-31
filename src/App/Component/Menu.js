@@ -20,53 +20,77 @@ class Menu extends Component{
   };  
   
   handleSelect = num => this.setState({ checked: num });
-
+//do not use "=" to assign state : XX num => {this.state.checked = num}
+// componentDidUpdate(){
+//   this.setState
+// }
   handleAdd (obj) {
+    
     // console.log(obj);
-    const menu = this.state.menu;
-    menu.push(obj);
+    const oldMenu = this.state.menu;
+   // menu[this.state.menu.length] = obj;
+
+    const newMenu = [...oldMenu,obj];
     // console.log(menu[menu.length-1]);
-    this.setState({ menu });
+    this.setState({ menu:newMenu });
   }
 
-  handleDelete(del){
+  handleDelete(del,id){
     console.log('del',del);
-    var menu = this.state.menu;
+    const menu = this.state.menu;
     // console.log('menu',menu);
-    menu.map((obj,index)=>{
-      if(menu[index].name === del){
-        menu.splice(index,1);        
+    // menu.map((obj,index)=>{
+    //   if(menu[index].name === del){
+    //     menu.splice(index,1);        
+    //   }
+    // })
+    for(let i in menu){
+      if(menu[i].name === del && i === id){
+        menu.splice(i,1);
+        break;
       }
-    })    
+    }
     this.setState({ menu ,checked:0 });
     // document.getElementById(obj).remove();
   }
 
   handlePriceChange = newValue =>{
     const { menu, checked } = this.state;
-    menu[this.state.checked].price = newValue;
-    this.setState({ menu });
+    // menu[this.state.checked].price = newValue;
+    const newMenu = menu.map((ele,index)=>{
+      if(index !== checked){
+        return ele
+      }else{
+        return{
+          ...ele,
+          price : newValue
+        }        
+      }
+    })
+    this.setState({ menu : newMenu });
   }
 
   handleTimeChange = newValue => {
     const { menu, checked } = this.state;
-    menu[this.state.checked].time = newValue;
+    menu[checked].time = newValue;
     this.setState({ menu });
   }
-  render() {    
+  render() {
+    const { menu,checked } = this.state;    
     console.log('this.state',this.state);
     console.log('this.state.menu[this.state.checked]',this.state.menu[this.state.checked])
+    console.log('checked:',this.state.checked);
     return (          
       <div>
         <h2>Menu</h2>
         <div>          
             {
-              this.state.menu.map((obj, index) => {
+              menu.map((obj, index) => {
                 return (
                   <Content
                     key = {index}
                     No = {index} 
-                    check = {this.state.checked === index }                     
+                    check = { checked === index }                     
                     data = {obj} 
                     onMenuClick = {this.handleSelect}
                   />
@@ -74,12 +98,12 @@ class Menu extends Component{
               })
             } 
         </div>
-
         <h2>Modify</h2>
         <Modify          
-          currentSelected = {this.state.checked}
-          name = {this.state.menu[this.state.checked].name || ''}
-          data = {this.state.menu[this.state.checked]}
+          currentSelected = {checked}
+          no = {checked}
+          name = {menu[checked].name}
+          data = {menu[checked]}
           onPriceChange = {this.handlePriceChange}          
           onTimeChange = {this.handleTimeChange}
           onAddNew = {this.handleAdd}     
